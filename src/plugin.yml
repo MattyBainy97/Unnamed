@@ -1,0 +1,24 @@
+name: Unnamed
+main: com.unnamed.Unnamed
+author: Matty
+version: 1.0
+description: >
+             Unnamed Plugin
+
+commands:
+  name:
+    description: Renames you
+    permission: bc.name
+    permission-message: §cPermission Denied!
+  skin:
+    description: Re-skins you
+    permission: bc.skin
+    permission-message: §cPermission Denied!
+
+permissions:
+  bc.name:
+    description: Allows use of name command
+    default: op
+  bc.skin:
+    description: Allows use of skin command
+    default: op
