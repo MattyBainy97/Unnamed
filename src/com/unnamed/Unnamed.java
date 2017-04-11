@@ -1,15 +1,12 @@
 package com.unnamed;
 
 import com.unnamed.handlers.player.PlayerHandler;
-import com.unnamed.listeners.entity.player.OnChat;
 import com.unnamed.utils.ChatUtilities;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Unnamed extends JavaPlugin {
@@ -20,32 +17,10 @@ public class Unnamed extends JavaPlugin {
 
         plugin = this;
 
-        Bukkit.setDefaultGameMode(GameMode.ADVENTURE);
-        World w = Bukkit.getServer().getWorld("ProjectUnnamed");
-        w.setAutoSave(false);
-        w.setTime(0);
-        w.setStorm(false);
-        w.setWeatherDuration(9999999);
-        w.setDifficulty(Difficulty.PEACEFUL);
-        w.setGameRuleValue("doDaylightCycle", "false");
-        for (Entity e : w.getEntities()) {
-
-            e.remove();
-
-        }
-
-        registerListeners();
-
     }
 
     @Override
     public void onDisable() {
-
-        for (Player p : Bukkit.getOnlinePlayers()) {
-
-            p.kickPlayer("Rejoin.");
-
-        }
 
         plugin = null;
 
@@ -103,6 +78,11 @@ public class Unnamed extends JavaPlugin {
 
                         PlayerHandler.setPlayerName(player, "");
                         ChatUtilities.onePlayer("Player name cleared", player);
+
+                    }else if(args[0].equalsIgnoreCase("sims")) {
+
+                        PlayerHandler.setPlayerName(player, ChatColor.GREEN + "" + ChatColor.BOLD + "\u2666");
+                        ChatUtilities.onePlayer("", player);
 
                     }else{
 
@@ -171,13 +151,6 @@ public class Unnamed extends JavaPlugin {
         }
 
         return false;
-
-    }
-
-    public void registerListeners() {
-
-        PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new OnChat(this), this);
 
     }
 

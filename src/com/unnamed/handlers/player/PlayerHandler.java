@@ -6,14 +6,12 @@ import com.mojang.authlib.properties.PropertyMap;
 import com.unnamed.Unnamed;
 import com.unnamed.utils.ChatUtilities;
 import net.minecraft.server.v1_11_R1.EntityPlayer;
+import net.minecraft.server.v1_11_R1.PacketPlayOutHeldItemSlot;
 import net.minecraft.server.v1_11_R1.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_11_R1.PacketPlayOutRespawn;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -108,26 +106,29 @@ public class PlayerHandler {
 
     private static final void reloadPlayer(Player player) {
 
-        final EntityPlayer ep = ((CraftPlayer) player).getHandle();
+        final CraftPlayer cp = (CraftPlayer) player;
+        final EntityPlayer ep = cp.getHandle();
         final PacketPlayOutPlayerInfo removeInfo = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, ep);
         final PacketPlayOutPlayerInfo addInfo = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, ep);
-        final Location loc = player.getLocation().clone();
+        final PacketPlayOutRespawn respawn = new PacketPlayOutRespawn(ep.dimension, ep.getWorld().getDifficulty(), ep.getWorld().getWorldData().getType(), ep.playerInteractManager.getGameMode());
+        final PacketPlayOutHeldItemSlot slot = new PacketPlayOutHeldItemSlot(player.getInventory().getHeldItemSlot());
         ep.playerConnection.sendPacket(removeInfo);
         ep.playerConnection.sendPacket(addInfo);
-        World w = Bukkit.getWorlds().get(1);
-        player.teleport(w.getSpawnLocation());
-        new BukkitRunnable() {
+        ep.playerConnection.sendPacket(respawn);
+        ep.playerConnection.sendPacket(slot);
+        cp.updateScaledHealth();
+        ep.triggerHealthUpdate();
+        cp.updateInventory();
+        Bukkit.getScheduler().runTask(Unnamed.getPlugin(), new Runnable(){
 
             @Override
             public void run() {
 
-                player.teleport(loc);
-                ep.playerConnection.sendPacket(new PacketPlayOutRespawn(ep.dimension, ep.getWorld().getDifficulty(), ep.getWorld().getWorldData().getType(), ep.playerInteractManager.getGameMode()));
-                player.updateInventory();
+                ep.updateAbilities();
 
             }
 
-        }.runTaskLater(Unnamed.getPlugin(), 2L);
+        });
 
         for (Player p : Bukkit.getOnlinePlayers()) {
 
