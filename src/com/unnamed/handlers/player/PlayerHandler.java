@@ -10,6 +10,7 @@ import net.minecraft.server.v1_11_R1.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_11_R1.PacketPlayOutRespawn;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -110,10 +111,11 @@ public class PlayerHandler {
         final EntityPlayer ep = ((CraftPlayer) player).getHandle();
         final PacketPlayOutPlayerInfo removeInfo = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, ep);
         final PacketPlayOutPlayerInfo addInfo = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, ep);
-        final Location loc = player.getLocation();
+        final Location loc = player.getLocation().clone();
         ep.playerConnection.sendPacket(removeInfo);
         ep.playerConnection.sendPacket(addInfo);
-        player.teleport(Bukkit.getWorld("ProjectUnnamed_nether").getSpawnLocation());
+        World w = Bukkit.getWorlds().get(1);
+        player.teleport(w.getSpawnLocation());
         new BukkitRunnable() {
 
             @Override
@@ -121,6 +123,7 @@ public class PlayerHandler {
 
                 player.teleport(loc);
                 ep.playerConnection.sendPacket(new PacketPlayOutRespawn(ep.dimension, ep.getWorld().getDifficulty(), ep.getWorld().getWorldData().getType(), ep.playerInteractManager.getGameMode()));
+                player.updateInventory();
 
             }
 
