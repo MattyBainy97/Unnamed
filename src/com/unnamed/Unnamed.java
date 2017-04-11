@@ -79,11 +79,6 @@ public class Unnamed extends JavaPlugin {
                         PlayerHandler.setPlayerName(player, "");
                         ChatUtilities.onePlayer("Player name cleared", player);
 
-                    }else if(args[0].equalsIgnoreCase("sims")) {
-
-                        PlayerHandler.setPlayerName(player, ChatColor.GREEN + "" + ChatColor.BOLD + "\u2666");
-                        ChatUtilities.onePlayer("", player);
-
                     }else{
 
                         boolean found = false;
