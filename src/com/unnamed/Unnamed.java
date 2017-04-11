@@ -74,11 +74,6 @@ public class Unnamed extends JavaPlugin {
                         PlayerHandler.setPlayerName(player, player.getDisplayName());
                         ChatUtilities.onePlayer("Player name reverted to " + ChatColor.DARK_AQUA + player.getDisplayName(), player);
 
-                    }else if(args[0].equalsIgnoreCase("none")) {
-
-                        PlayerHandler.setPlayerName(player, "");
-                        ChatUtilities.onePlayer("Player name cleared", player);
-
                     }else{
 
                         boolean found = false;
